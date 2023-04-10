@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Linq;
+using static AVFoundation.AVMetadataIdentifiers;
 
 namespace ArmyFlag;
 
@@ -27,6 +28,7 @@ public partial class BarcodeQrCode : ContentPage
         Dispatcher.Dispatch(async () =>
         {
             SetBarcodeResult.Invoke(_num, e.Results[0].Value);
+            isOk = true;
             await Navigation.PopAsync();
         });
     }

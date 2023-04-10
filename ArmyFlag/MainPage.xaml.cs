@@ -21,7 +21,7 @@ public partial class MainPage : ContentPage
     private void SetData(int i, string text)
     {
         res[i] = text;
-        DisplayAlert(i.ToString(), text, "取消");
+        DisplayAlert(i.ToString(), "扫描成功", "取消");
 
         if (!string.IsNullOrWhiteSpace(res[0]) && !string.IsNullOrWhiteSpace(res[1]))
         {
@@ -34,6 +34,8 @@ public partial class MainPage : ContentPage
             }
 
             Result.Text = num1 > num2 ? "结果1大" : (num1 != num2 ? "结果2大" : "一样大");
+
+            DisplayAlert(i.ToString(), Result.Text, "取消");
         }
     }
 
