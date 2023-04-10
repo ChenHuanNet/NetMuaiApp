@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui"
              x:Class="ArmyFlag.MainPage">
 
     <ScrollView>
@@ -8,31 +9,30 @@
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
-
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
+            <Button
+                Text="重置"
+                Clicked="Button_Clicked"
                 HorizontalOptions="Center" />
-
+            <Button
+                x:Name="Scan"
+                Text="扫码1"
+                Clicked="Scan_Clicked"
+                HorizontalOptions="Center" />
+            <Button
+                x:Name="Scan2"
+                Text="扫码2"
+                Clicked="Scan2_Clicked"      
+                HorizontalOptions="Center" />
             <Label
-                Text="Hello, World!"
+                Text="比较结果"
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="32"
                 HorizontalOptions="Center" />
-
             <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
+                x:Name="Result"
+                Text=""
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="32"
                 HorizontalOptions="Center" />
 
         </VerticalStackLayout>
