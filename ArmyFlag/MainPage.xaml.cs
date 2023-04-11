@@ -22,9 +22,9 @@ public partial class MainPage : ContentPage
         armyFlag.Add(34, "连长");
         armyFlag.Add(33, "排长");
         armyFlag.Add(32, "工兵");
-        armyFlag.Add(31, "炸弹");
-        armyFlag.Add(30, "地雷");
-        armyFlag.Add(29, "军旗");
+        armyFlag.Add(0, "炸弹");
+        armyFlag.Add(99, "地雷");
+        armyFlag.Add(1, "军旗");
 
         #endregion
     }
@@ -55,7 +55,36 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            Result.Text = num1 > num2 ? "结果1大" : (num1 != num2 ? "结果2大" : "一样大");
+            string msg = "";
+            if (num1 == 0 || num2 == 0)
+            {
+                if (num1 == 40 || num2 == 40)
+                {
+                    //有炸弹就是一样大
+                    msg = $"{(num1 == 40 ? "棋子1的" : "")}{(num2 == 40 ? "棋子2的" : "")}司令死了";
+                }
+                else
+                {
+                    //有炸弹就是一样大
+                    msg = "一样大";
+                }
+            }
+            else if (num1 == 32 && num2 == 99)
+            {
+                //工兵吃地雷
+                msg = "结果1大";
+            }
+            else if (num1 == 99 && num2 == 32)
+            {
+                //工兵吃地雷
+                msg = "结果2大";
+            }
+            else
+            {
+                msg = num1 > num2 ? "结果1大" : (num1 != num2 ? "结果2大" : "一样大");
+            }
+
+            Result.Text = msg;
 
             if (ShowDetail.IsChecked)
             {
