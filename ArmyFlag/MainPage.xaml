@@ -34,7 +34,17 @@
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="32"
                 HorizontalOptions="Center" />
-
+            <CheckBox x:Name="ShowDetail"    />
+            <Label
+                Text="显示详细结果"
+                HorizontalOptions="Center"
+                FontSize="32"/>
+            <Label
+                x:Name="Detail"
+                Text=""
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="32"
+                HorizontalOptions="Center" />
         </VerticalStackLayout>
     </ScrollView>
 
