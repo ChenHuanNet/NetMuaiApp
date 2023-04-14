@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Snowflake.Core" Version="2.0.0" />
+    <PackageReference Include="WebApiClientCore" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Army.Repository.Sqlite\Army.Repository.Sqlite.csproj" />
+  </ItemGroup>
+
+</Project>
