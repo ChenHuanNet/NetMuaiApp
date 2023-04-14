@@ -57,14 +57,13 @@ namespace Army.Repository.Sqlite
         private async Task CreateTable()
         {
             await Database.CreateTableAsync<DilidiliPCSource>();
-            await Database.CreateIndexAsync<DilidiliPCSource>(x => x.Id);
             await Database.CreateIndexAsync<DilidiliPCSource>(x => x.Name);
 
 
             await Database.CreateTableAsync<DilidiliPCSourceItem>();
-            await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Id);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Name);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.SourceId);
+            await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Url);
         }
 
         #endregion

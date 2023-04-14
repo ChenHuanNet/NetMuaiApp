@@ -25,7 +25,7 @@ namespace Army.Service
                 o.JsonSerializeOptions.DictionaryKeyPolicy = null;
             }).ConfigureHttpClient(c =>
             {
-                c.Timeout = TimeSpan.FromSeconds(10);
+                c.Timeout = TimeSpan.FromSeconds(30);
             });
 
 

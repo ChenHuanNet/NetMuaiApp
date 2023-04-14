@@ -28,6 +28,7 @@ public static class MauiProgram
         builder.Services.AddArmyRepository();
         builder.Services.AddService();
         builder.Services.AddSingleton<Dilidili>();
+        builder.Services.AddSingleton<DilidiliDetail>();
         builder.Services.AddSingleton(x => new IdWorker(1, 1));
 
 

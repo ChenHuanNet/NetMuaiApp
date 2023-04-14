@@ -17,6 +17,8 @@ namespace Army.Domain.Models
 
         public string PlaySource { get; set; }
 
+        public int CurrentMaxNum { get; set; }
+
         public string Url { get; set; }
 
         public string Remark { get; set; }

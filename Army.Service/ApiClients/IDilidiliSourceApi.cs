@@ -10,5 +10,10 @@ namespace Army.Service.ApiClients
     {
         [HttpGet("/media/{mediaId}/")]
         ITask<string> GetSourceHtml(string mediaId);
+
+
+
+        [HttpGet("/play/{mediaId}/{detailId}.html")]
+        ITask<string> GetSourceItemHtml(string mediaId, string detailId);
     }
 }
