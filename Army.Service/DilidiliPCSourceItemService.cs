@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Army.Infrastructure.Extensions;
 using Army.Infrastructure.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
+using System.Net.Http;
 
 namespace Army.Service
 {
@@ -35,6 +37,14 @@ namespace Army.Service
 
         public async Task<List<DilidiliPCSourceItem>> AnalysisAsync(long sourceId, string currentSource, string mediaId, string detailId)
         {
+            var dilidiliPCSourceItems = await _dilidiliPCSourceItemRepository.FindBySourceIdAsync(sourceId);
+            if (dilidiliPCSourceItems != null && dilidiliPCSourceItems.Count > 0)
+            {
+                return dilidiliPCSourceItems;
+            }
+
+            dilidiliPCSourceItems = new List<DilidiliPCSourceItem>();
+
             string prefix = $"{AppConfigHelper.DiliDiliSourceHost}/play/{mediaId}/";
 
             var html = await _dilidiliSourceApi.GetSourceItemHtml(mediaId, detailId);
@@ -45,7 +55,7 @@ namespace Army.Service
             var sources = sourcesHtml.GetHtmlWithAttr("li", "class", "nav-item");
             var contents = html.GetHtmlWithAttr("div", "role", "tabpanel");
 
-            var dilidiliPCSourceItems = new List<DilidiliPCSourceItem>();
+
             DilidiliPCSourceItem dilidiliPCSourceItem = null;
             for (int i = 0; i < sources.Count; i++)
             {
@@ -96,6 +106,102 @@ namespace Army.Service
             }
 
             return dilidiliPCSourceItems;
+        }
+
+
+        public async Task SaveAsync(List<DilidiliPCSourceItem> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+                //只针对新解析的进行更新覆盖操作
+                if (item.Id == 0)
+                {
+                    var temp = await FindByUrlAsync(item.Url);
+                    if (temp != null)
+                    {
+                        temp.Url = item.Url;
+                        temp.SourceId = item.SourceId;
+                        temp.Sort = item.Sort;
+                        temp.Name = item.Name;
+                        await _dilidiliPCSourceItemRepository.UpdateOneAsync(temp);
+                    }
+                    else
+                    {
+                        item.Id = _idWorker.NextId();
+                        await _dilidiliPCSourceItemRepository.InsertAsync(item);
+                    }
+                }
+                else
+                {
+                    await _dilidiliPCSourceItemRepository.UpdateOneAsync(item);
+                }
+            }
+        }
+
+
+        public async Task<List<string>> DownloadVideos(long sourceId, List<string> urls)
+        {
+            List<string> localFiles = new List<string>();
+            foreach (var url in urls)
+            {
+                Uri uri = new Uri(url);
+
+                string fileName = uri.AbsolutePath.TrimStart('/');
+
+                string name = fileName.Substring(fileName.LastIndexOf('/'), fileName.Length - fileName.LastIndexOf('/')).TrimStart('/');
+
+                string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString());
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                string filePath = Path.Combine(dir, name);
+
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    var res = await httpClient.GetAsync(url);
+                    if (res.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var stream = await res.Content.ReadAsStreamAsync();
+                        //创建本地文件写入流
+                        using (Stream fs = new FileStream(filePath, FileMode.Create))
+                        {
+                            byte[] bArr = new byte[1024];
+                            int size = stream.Read(bArr, 0, bArr.Length);
+                            while (size > 0)
+                            {
+                                fs.Write(bArr, 0, size);
+                                size = stream.Read(bArr, 0, bArr.Length);
+                            }
+                        }
+                        stream.Close();
+
+                        localFiles.Add(filePath);
+                    }
+                }
+
+            }
+
+            return localFiles;
+        }
+
+        public void ClearFileCache(long sourceId)
+        {
+            string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString());
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
+        }
+
+        public void ClearAllFileCache()
+        {
+            string dir = Path.Combine(AppConfigHelper.VideoDir);
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
         }
     }
 }

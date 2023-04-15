@@ -7,14 +7,18 @@ public partial class DilidiliDetail : ContentPage
 {
 
     private readonly DilidiliPCSourceItemService _dilidiliPCSourceItemService;
+    private readonly DilidiliVideo _dilidiliVideo;
     private DilidiliPCSource _dilidiliPCSource;
     private List<DilidiliPCSourceItem> _dilidiliPCSourceItems;
     private List<DilidiliPCSourceItem> _showPCSourceItems;
 
-    public DilidiliDetail(DilidiliPCSourceItemService dilidiliPCSourceItemService)
+    private bool isInit = false;
+
+    public DilidiliDetail(DilidiliPCSourceItemService dilidiliPCSourceItemService, DilidiliVideo dilidiliVideo)
     {
         InitializeComponent();
         _dilidiliPCSourceItemService = dilidiliPCSourceItemService;
+        _dilidiliVideo = dilidiliVideo;
     }
 
 
@@ -25,7 +29,7 @@ public partial class DilidiliDetail : ContentPage
         _dilidiliPCSource = dilidiliPCSource;
         this.Title = _dilidiliPCSource.Name;
         lblSource.Text = $"{_dilidiliPCSource.PlaySource},共({dilidiliPCSource.CurrentMaxNum})";
-
+        isInit = false;
         await AnalysisAsync();
     }
 
@@ -38,15 +42,22 @@ public partial class DilidiliDetail : ContentPage
         _dilidiliPCSourceItems = await _dilidiliPCSourceItemService.AnalysisAsync(_dilidiliPCSource.Id, _dilidiliPCSource.PlaySource, mediaId, detailId);
 
         await DisplayAlert("提示", "数据加载完成", "取消");
+        isInit = true;
     }
 
-    private void sourceItemList_ItemTapped(object sender, ItemTappedEventArgs e)
+    private async void sourceItemList_ItemTapped(object sender, ItemTappedEventArgs e)
     {
-
+        var item = (DilidiliPCSourceItem)e.Item;
+        await Navigation.PushAsync(_dilidiliVideo);
+        await _dilidiliVideo.Init(item);
     }
 
     private void btnSearch_Clicked(object sender, EventArgs e)
     {
+        if (!isInit)
+        {
+            return;
+        }
         int.TryParse(txtName.Text?.Trim(), out int num);
         if (num == 0)
         {
@@ -62,5 +73,15 @@ public partial class DilidiliDetail : ContentPage
     private void btnClear_Clicked(object sender, EventArgs e)
     {
         txtName.Text = string.Empty;
+    }
+
+    private async void Button_Clicked(object sender, EventArgs e)
+    {
+        if (!isInit)
+        {
+            return;
+        }
+        await _dilidiliPCSourceItemService.SaveAsync(_dilidiliPCSourceItems);
+        await DisplayAlert("提示", "保存完成", "取消");
     }
 }

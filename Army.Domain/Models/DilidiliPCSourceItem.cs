@@ -32,7 +32,7 @@ namespace Army.Domain.Models
         public string Name { get; set; }
         public int Sort { get; set; }
         public string Url { get; set; }
-        public string Remart { get; set; }
+        public string Remark { get; set; }
         public string DownloadText { get; set; }
     }
 }

@@ -46,7 +46,12 @@ public partial class Dilidili : ContentPage
     /// <param name="e"></param>
     private async void btnSearch_Clicked(object sender, EventArgs e)
     {
-        _dilidiliPCSources = await _dilidiliPCSourceService.FindLikeNameAsync(txtName.Text.Trim());
+        if (string.IsNullOrWhiteSpace(txtName.Text))
+        {
+            await DisplayAlert("提示", "请输入搜索内容", "取消");
+            return;
+        }
+        _dilidiliPCSources = await _dilidiliPCSourceService.FindLikeNameAsync(txtName.Text?.Trim());
         sourceList.ItemsSource = _dilidiliPCSources;
     }
 
@@ -67,7 +72,12 @@ public partial class Dilidili : ContentPage
     /// <param name="e"></param>
     private async void btnAnalysis_Clicked(object sender, EventArgs e)
     {
-        _dilidiliPCSources = await _dilidiliPCSourceService.AnalysisAsync(txtUrl.Text.Trim());
+        if (string.IsNullOrWhiteSpace(txtUrl.Text))
+        {
+            await DisplayAlert("提示", "请输入媒体ID", "取消");
+            return;
+        }
+        _dilidiliPCSources = await _dilidiliPCSourceService.AnalysisAsync(txtUrl.Text?.Trim());
         this.sourceList.ItemsSource = _dilidiliPCSources;
     }
 

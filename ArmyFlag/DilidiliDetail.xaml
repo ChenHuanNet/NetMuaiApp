@@ -8,12 +8,18 @@
             x:Name="lblSource"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-
+        <Label 
+            Text="请等待数据加载完成之后进行搜索"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
         <StackLayout Orientation="Horizontal">
             <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入集数" />
             <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnSearch_Clicked" />
             <Button x:Name="btnClear" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear_Clicked"/>
         </StackLayout>
+
+        <Button  Text="保存当前最新数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
+
         <ListView x:Name="sourceItemList" ItemsSource="{Binding DilidiliSourceItemList}" ItemTapped="sourceItemList_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>
