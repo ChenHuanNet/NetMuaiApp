@@ -52,6 +52,11 @@ public partial class Dilidili : ContentPage
             return;
         }
         _dilidiliPCSources = await _dilidiliPCSourceService.FindLikeNameAsync(txtName.Text?.Trim());
+        if (!_dilidiliPCSources.Any())
+        {
+            await DisplayAlert("提示", "本地没有当前搜索结果", "取消");
+            return;
+        }
         sourceList.ItemsSource = _dilidiliPCSources;
     }
 
