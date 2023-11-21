@@ -13,7 +13,6 @@ namespace Army.Repository.Sqlite
     {
         public async Task<List<DilidiliPCSource>> FindLikeNameAsync(string name)
         {
-            await base.Init();
             return await base.Database.QueryAsync<DilidiliPCSource>($" select * from DilidiliPCSource where Name like '%{name}%' order by Id desc ");
         }
     }

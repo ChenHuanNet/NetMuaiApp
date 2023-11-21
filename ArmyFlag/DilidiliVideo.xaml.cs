@@ -11,11 +11,10 @@ public partial class DilidiliVideo : ContentPage
 {
     private readonly DilidiliPCSourceItemService _dilidiliPCSourceItemService;
     private List<string> tsFiles = new List<string>();
-    private int _currentIndex = 0;
-    private TimeSpan _currentPosition = TimeSpan.Zero;
-    private double totalSeconds = 0;
 
     private string _localVideoUrl;
+
+    private long _sourceId;
 
     public DilidiliVideo(DilidiliPCSourceItemService dilidiliPCSourceItemService)
     {
@@ -25,6 +24,7 @@ public partial class DilidiliVideo : ContentPage
 
     public async Task Init(DilidiliPCSourceItem item)
     {
+        _sourceId = item.Id;
         await StartPlayback();
     }
 
@@ -58,13 +58,13 @@ public partial class DilidiliVideo : ContentPage
         tsFiles.Add("https://s9.fsvod1.com/20231112/G0O0JQeo/2000kb/hls/FqGLt6qW.ts");
 
         lblProgress.Text = $"正在下载资源0/{tsFiles.Count}";
-        tsFiles = await _dilidiliPCSourceItemService.DownloadVideos(999, tsFiles, (index, total) =>
+        tsFiles = await _dilidiliPCSourceItemService.DownloadVideos(_sourceId, tsFiles, (index, total) =>
         {
             lblProgress.Text = $"正在下载资源{index}/{total}";
         });
 
         lblProgress.Text = $"正在解析资源0/{tsFiles}";
-        _localVideoUrl = _dilidiliPCSourceItemService.MergeTsVideo(999, tsFiles, (index, total) =>
+        _localVideoUrl = _dilidiliPCSourceItemService.MergeTsVideo(_sourceId, tsFiles, (index, total) =>
         {
             lblProgress.Text = $"正在解析资源{index}/{total}";
         });
@@ -89,5 +89,8 @@ public partial class DilidiliVideo : ContentPage
         await StartPlayback();
     }
 
-
+    private void Button_Clicked_1(object sender, EventArgs e)
+    {
+        _dilidiliPCSourceItemService.ClearFileCache(_sourceId);
+    }
 }

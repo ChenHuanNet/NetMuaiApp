@@ -95,7 +95,15 @@ public partial class Dilidili : ContentPage
     {
         if (await DisplayAlert("确认重置?", "重置后，数据将清理，不可恢复！", "确认", "取消"))
         {
-            await _dilidiliPCSourceService.ResetDataAsync();
+            try
+            {
+                await _dilidiliPCSourceService.ResetDataAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("错误", ex.ToString(), "取消");
+            }
+
         }
     }
 

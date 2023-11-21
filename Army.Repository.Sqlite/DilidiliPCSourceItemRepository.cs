@@ -13,7 +13,6 @@ namespace Army.Repository.Sqlite
     {
         public async Task<List<DilidiliPCSourceItem>> FindBySourceIdAsync(long sourceId)
         {
-            await base.Init();
             return await base.Database.QueryAsync<DilidiliPCSourceItem>($" select * from DilidiliPCSourceItem where SourceId={sourceId} order by Sort desc ");
         }
     }

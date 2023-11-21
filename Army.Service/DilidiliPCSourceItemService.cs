@@ -207,7 +207,7 @@ namespace Army.Service
         }
 
 
-        public string MergeTsVideo(int sourceId, List<string> tsFiles, Action<int, int> action)
+        public string MergeTsVideo(long sourceId, List<string> tsFiles, Action<int, int> action)
         {
             string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString());
             if (!Directory.Exists(dir))

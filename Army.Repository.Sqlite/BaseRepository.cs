@@ -1,4 +1,5 @@
-﻿using Army.Domain.Models;
+﻿using Army.Domain.Dto;
+using Army.Domain.Models;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -14,22 +15,14 @@ namespace Army.Repository.Sqlite
 
         public BaseRepository()
         {
+            Database = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
+            Database.EnableWriteAheadLoggingAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         }
 
 
         #region 初始化
 
-        protected async Task Init()
-        {
-            if (Database != null)
-                return;
-
-            Database = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
-
-            await Database.EnableWriteAheadLoggingAsync();
-            await CreateTable();
-        }
 
         public async Task ResetData()
         {
@@ -39,23 +32,15 @@ namespace Army.Repository.Sqlite
 
         private async Task DropTable()
         {
-            if (await ExistTable<DilidiliPCSource>())
-                await Database.DropTableAsync<DilidiliPCSource>();
-            if (await ExistTable<DilidiliPCSourceItem>())
-                await Database.DropTableAsync<DilidiliPCSourceItem>();
+            await Database.DropTableAsync<DilidiliPCSource>();
+            await Database.DropTableAsync<DilidiliPCSourceItem>();
         }
 
-
-        private async Task<bool> ExistTable<T1>()
-        {
-            string sql = $" SELECT name FROM sqlite_master WHERE type='table' AND name='{typeof(T1).Name}'; ";
-            var num = await Database.ExecuteAsync(sql);
-            return num > 0;
-        }
 
 
         private async Task CreateTable()
         {
+
             await Database.CreateTableAsync<DilidiliPCSource>();
             await Database.CreateIndexAsync<DilidiliPCSource>(x => x.Name);
 
@@ -64,6 +49,7 @@ namespace Army.Repository.Sqlite
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Name);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.SourceId);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Url);
+
         }
 
         #endregion
@@ -72,13 +58,11 @@ namespace Army.Repository.Sqlite
 
         public async Task DeleteByIdAsync(object id)
         {
-            await Init();
             await Database.DeleteAsync<T>(id);
         }
 
         public async Task<T> FindByIdAsync(object id, bool throwIfNotExist = true)
         {
-            await Init();
             if (throwIfNotExist)
                 return await Database.GetAsync<T>(id);
             else
@@ -87,32 +71,27 @@ namespace Army.Repository.Sqlite
 
         public async Task<T> FindSingleAsync(Expression<Func<T, bool>> filter)
         {
-            await Init();
             return await Database.FindAsync<T>(filter);
         }
 
         public async Task InsertAsync(T entity)
         {
-            await Init();
             await Database.InsertAsync(entity);
         }
 
         public async Task<int> InsertManyAsync(T[] entities)
         {
-            await Init();
             return await Database.InsertAllAsync(entities);
         }
 
 
         public async Task UpdateManyAsync(T[] entities)
         {
-            await Init();
             await Database.UpdateAllAsync(entities);
         }
 
         public async Task<int> UpdateOneAsync(T entity)
         {
-            await Init();
             return await Database.UpdateAsync(entity);
         }
 
