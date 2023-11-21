@@ -35,9 +35,8 @@ namespace Army.Service
             return await _dilidiliPCSourceItemRepository.FindSingleAsync(x => x.Url == url);
         }
 
-        public async Task AnalysisAsync(string detailId, int num, string qp)
+        public async Task AnalysisAsync(string html)
         {
-            var html = await _dilidiliSourceApi.GetVideoHtml(detailId, num, qp);
 
             html = html.GetFirstHtmlWithAttr("iframe", "id", "playiframe");
         }

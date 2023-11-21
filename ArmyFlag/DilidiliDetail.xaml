@@ -22,6 +22,7 @@
             <Label Text="播放源：" />
             <Picker x:Name="videoSourcePicker" Title="选择播放源" ItemDisplayBinding="{Binding Content}"  SelectedIndexChanged="videoSourcePicker_SelectedIndexChanged"  />
         </StackLayout>
+        <WebView x:Name="webView" Navigated="webView_Navigated" IsVisible="false" />
         <ListView x:Name="sourceItemList" ItemsSource="{Binding DilidiliSourceItemList}" ItemTapped="sourceItemList_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>

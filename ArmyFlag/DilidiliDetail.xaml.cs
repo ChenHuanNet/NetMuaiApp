@@ -2,6 +2,11 @@ using Army.Domain.Consts;
 using Army.Domain.Dto;
 using Army.Domain.Models;
 using Army.Service;
+using System;
+using System.Globalization;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 
 namespace ArmyFlag;
 
@@ -93,8 +98,8 @@ public partial class DilidiliDetail : ContentPage
 
         string url = $"{AppConfigHelper.DiliDiliSourceHost}/tv/{detailId}/{num}.html";
 
-        //await _dilidiliPCSourceItemService.AnalysisAsync(detailId, num, _sourceVal);
 
+        webView.Source = url;
     }
 
 
@@ -112,5 +117,31 @@ public partial class DilidiliDetail : ContentPage
             var item = (VideoSourceDto)picker.SelectedItem;
             _sourceVal = item.Value;
         }
+    }
+
+    private async void webView_Navigated(object sender, WebNavigatedEventArgs e)
+    {
+        var url = e.Url;
+        if (url.StartsWith(AppConfigHelper.DiliDiliSourceHost + "/tv"))
+        {
+            var webView = sender as WebView;
+
+            string html = await webView.EvaluateJavaScriptAsync("document.documentElement.outerHTML");
+
+            var html2 = DecodeEncodedNonAsciiCharacters(html);
+
+            await _dilidiliPCSourceItemService.AnalysisAsync(html);
+        }
+    }
+
+    static string DecodeEncodedNonAsciiCharacters(string value)
+    {
+        return Regex.Replace(
+         value,
+         @"\\u(?<Value>[a-zA-Z0-9]{4})",
+         m =>
+         {
+             return ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString();
+         });
     }
 }
