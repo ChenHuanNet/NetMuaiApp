@@ -140,9 +140,12 @@ namespace Army.Service
         }
 
 
-        public async Task<List<string>> DownloadVideos(long sourceId, List<string> urls)
+        public async Task<List<string>> DownloadVideos(long sourceId, List<string> urls, Action<int, int> action)
         {
             List<string> localFiles = new List<string>();
+
+            using HttpClient httpClient = new HttpClient();
+
             foreach (var url in urls)
             {
                 Uri uri = new Uri(url);
@@ -158,30 +161,29 @@ namespace Army.Service
                 }
                 string filePath = Path.Combine(dir, name);
 
-                using (HttpClient httpClient = new HttpClient())
+                var res = await httpClient.GetAsync(url);
+                if (res.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var res = await httpClient.GetAsync(url);
-                    if (res.StatusCode == System.Net.HttpStatusCode.OK)
+                    using var stream = await res.Content.ReadAsStreamAsync();
+                    //创建本地文件写入流
+                    using (Stream fs = new FileStream(filePath, FileMode.Create))
                     {
-                        var stream = await res.Content.ReadAsStreamAsync();
-                        //创建本地文件写入流
-                        using (Stream fs = new FileStream(filePath, FileMode.Create))
+                        byte[] bArr = new byte[1024];
+                        int size = stream.Read(bArr, 0, bArr.Length);
+                        while (size > 0)
                         {
-                            byte[] bArr = new byte[1024];
-                            int size = stream.Read(bArr, 0, bArr.Length);
-                            while (size > 0)
-                            {
-                                fs.Write(bArr, 0, size);
-                                size = stream.Read(bArr, 0, bArr.Length);
-                            }
+                            fs.Write(bArr, 0, size);
+                            size = stream.Read(bArr, 0, bArr.Length);
                         }
-                        stream.Close();
-
-                        localFiles.Add(filePath);
                     }
-                }
 
+                    localFiles.Add(filePath);
+
+                    action.Invoke(localFiles.Count, urls.Count);
+                }
             }
+
+
 
             return localFiles;
         }
@@ -202,6 +204,31 @@ namespace Army.Service
             {
                 Directory.Delete(dir, true);
             }
+        }
+
+
+        public string MergeTsVideo(int sourceId, List<string> tsFiles, Action<int, int> action)
+        {
+            string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString());
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            string outPath = Path.Combine(dir, sourceId + ".mp4");
+            using (FileStream reader = new FileStream(outPath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {   
+                int i = 0;
+                foreach (var item in tsFiles)
+                {
+                    using (FileStream readStream = new FileStream(item, FileMode.Open, FileAccess.Read))
+                    {
+                        readStream.CopyTo(reader);
+                    }
+                    i++;
+                    action.Invoke(i, tsFiles.Count);
+                }
+            }
+            return outPath;
         }
     }
 }

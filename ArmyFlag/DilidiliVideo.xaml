@@ -11,14 +11,13 @@
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
         <toolkit:MediaElement x:Name="mediaElement"
-                      ShouldAutoPlay="True"
-                      ShouldShowPlaybackControls="True"
-                      HeightRequest="300"
-                      WidthRequest="400"
-                      MediaEnded="mediaElement_MediaEnded"
-                      MediaOpened="mediaElement_MediaOpened"
-                     />
+                              ShouldAutoPlay="True"
+                              ShouldShowPlaybackControls="True"
+                              HeightRequest="300"
+                              WidthRequest="400"
+                              />
 
         <Button  Text="测试视频" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
+        <Label x:Name="lblProgress"/>
     </VerticalStackLayout>
 </ContentPage>
