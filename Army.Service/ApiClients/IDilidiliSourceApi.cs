@@ -24,5 +24,10 @@ namespace Army.Service.ApiClients
         [HttpGet("ssszz.php")]
         [UriFilter]
         ITask<string> SearchVideoAsync([Header("TenantId")] string tenantId, string q, int top = 10, int dect = 0, string other_kkk217 = AppConfigHelper.DiliDiliSourceHostEncoding);
+
+
+        [HttpGet("tv/{detailId}/{num}.html")]
+        [UriFilter]
+        ITask<string> GetVideoHtml(string detailId, int num, string qp);
     }
 }

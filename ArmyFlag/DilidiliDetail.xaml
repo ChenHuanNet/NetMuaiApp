@@ -18,8 +18,10 @@
             <Button x:Name="btnClear" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear_Clicked"/>
         </StackLayout>
 
-        <Button  Text="保存当前最新数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
-
+        <StackLayout>
+            <Label Text="播放源：" />
+            <Picker x:Name="videoSourcePicker" Title="选择播放源" ItemDisplayBinding="{Binding Content}"  SelectedIndexChanged="videoSourcePicker_SelectedIndexChanged"  />
+        </StackLayout>
         <ListView x:Name="sourceItemList" ItemsSource="{Binding DilidiliSourceItemList}" ItemTapped="sourceItemList_ItemTapped">
             <ListView.ItemTemplate>
                 <DataTemplate>

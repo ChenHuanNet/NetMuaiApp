@@ -4,10 +4,6 @@ using System.Text;
 
 namespace Army.Domain.Models
 {
-
-    /// <summary>
-    /// 输入didi的官网网址，去解析source-list 样式底下的地址
-    /// </summary>
     public class DilidiliPCSource
     {
         [SQLite.PrimaryKey]
