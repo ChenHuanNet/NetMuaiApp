@@ -5,30 +5,36 @@ using Army.Domain.Consts;
 using Army.Infrastructure.Models;
 using Army.Domain.Models;
 using Snowflake.Core;
+using System.Collections.ObjectModel;
 
 namespace ArmyFlag;
 
 public partial class Dilidili : ContentPage
 {
 
-    private readonly DilidiliPCSourceService _dilidiliPCSourceService;
+    private readonly DilidiliPCSourceService dilidiliPCSourceservice;
     private readonly IdWorker _idWorker;
     private readonly DilidiliDetail _dilidiliDetail;
+    private readonly string _searchUrl;
 
-    private List<DilidiliPCSource> _dilidiliPCSources = new List<DilidiliPCSource>();
 
     public Dilidili(DilidiliPCSourceService dilidiliPCSourceService, IDilidiliSourceApi dilidiliSourceApi, IdWorker idWorker, DilidiliDetail dilidiliDetail)
     {
         InitializeComponent();
 
-        _dilidiliPCSourceService = dilidiliPCSourceService;
+        dilidiliPCSourceservice = dilidiliPCSourceService;
         _idWorker = idWorker;
         _dilidiliDetail = dilidiliDetail;
+
     }
 
 
 
-
+    /// <summary>
+    /// 点击事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
     {
         var item = (DilidiliPCSource)e.Item;
@@ -51,39 +57,52 @@ public partial class Dilidili : ContentPage
             await DisplayAlert("提示", "请输入搜索内容", "取消");
             return;
         }
-        _dilidiliPCSources = await _dilidiliPCSourceService.FindLikeNameAsync(txtName.Text?.Trim());
-        if (!_dilidiliPCSources.Any())
+        var dilidiliPCSources = await dilidiliPCSourceservice.FindLikeNameAsync(txtName.Text?.Trim());
+        if (!dilidiliPCSources.Any())
         {
             await DisplayAlert("提示", "本地没有当前搜索结果", "取消");
             return;
         }
-        sourceList.ItemsSource = _dilidiliPCSources;
+        this.sourceList.ItemsSource = null;
+        this.sourceList.ItemsSource = dilidiliPCSources;
     }
 
     private void btnClear_Clicked(object sender, EventArgs e)
     {
         txtName.Text = string.Empty;
+        this.sourceList.ItemsSource = null;
     }
 
-    private void btnClear2_Clicked(object sender, EventArgs e)
-    {
-        txtUrl.Text = string.Empty;
-    }
 
     /// <summary>
-    /// 解析嘀哩嘀哩 pc web网页
+    /// 搜索
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private async void btnAnalysis_Clicked(object sender, EventArgs e)
+    private async void btnNetSearch_Clicked(object sender, EventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(txtUrl.Text))
+        try
         {
-            await DisplayAlert("提示", "请输入媒体ID", "取消");
-            return;
+            string name = txtName.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                await DisplayAlert("提示", "请输入搜索内容", "取消");
+                return;
+            }
+            var dilidiliPCSources = await dilidiliPCSourceservice.AnalysisAsync(name);
+            if (!dilidiliPCSources.Any())
+            {
+                await DisplayAlert("提示", "网络搜索没有结果", "取消");
+                return;
+            }
+            this.sourceList.ItemsSource = null;
+            this.sourceList.ItemsSource = dilidiliPCSources;
         }
-        _dilidiliPCSources = await _dilidiliPCSourceService.AnalysisAsync(txtUrl.Text?.Trim());
-        this.sourceList.ItemsSource = _dilidiliPCSources;
+        catch (Exception ex)
+        {
+            await DisplayAlert("错误", ex.ToString(), "取消");
+        }
+
     }
 
     /// <summary>
@@ -97,7 +116,7 @@ public partial class Dilidili : ContentPage
         {
             try
             {
-                await _dilidiliPCSourceService.ResetDataAsync();
+                await dilidiliPCSourceservice.ResetDataAsync();
             }
             catch (Exception ex)
             {
@@ -114,9 +133,10 @@ public partial class Dilidili : ContentPage
     /// <param name="e"></param>
     private async void Button_Clicked_1(object sender, EventArgs e)
     {
-        if (_dilidiliPCSources.Count > 0)
+        var data = this.sourceList.ItemsSource;
+        if (data != null && data is List<DilidiliPCSource> list)
         {
-            await _dilidiliPCSourceService.SaveAsync(_dilidiliPCSources);
+            await dilidiliPCSourceservice.SaveAsync(list);
         }
     }
 }

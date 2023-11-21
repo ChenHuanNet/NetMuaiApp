@@ -12,6 +12,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Army.Infrastructure.Extensions;
 using Army.Domain.Consts;
+using System.Net.Http;
+using Army.Domain.Dto;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Army.Service
 {
@@ -82,62 +86,28 @@ namespace Army.Service
         }
 
 
-        public async Task<List<DilidiliPCSource>> AnalysisAsync(string mediaId)
+        public async Task<List<DilidiliPCSource>> AnalysisAsync(string title)
         {
-            string prefix = $"{AppConfigHelper.DiliDiliSourceHost}/play/{mediaId}/";
+            var res = await _dilidiliSourceApi.SearchVideoAsync(Dilidili9Const.Search, title);
+            var searchResult = JsonSerializer.Deserialize<List<Dilidili9SearchDto>>(res);
 
-            var html = await _dilidiliSourceApi.GetSourceHtml(mediaId);
-
-            string title = html.GetFirstHtmlWithAttr("div", "class", "title").RemoveHtmlLabel().Replace("\n", "").Replace("\r", "").Replace("\t", "").Trim();
-
-            var sources = html.GetHtmlWithAttr("li", "class", "nav-item");
-            var contents = html.GetHtmlWithAttr("div", "role", "tabpanel");
-
-            var dilidiliPCSources = new List<DilidiliPCSource>();
-            DilidiliPCSource dilidiliPCSource = null;
-            for (int i = 0; i < sources.Count; i++)
+            List<DilidiliPCSource> result = new List<DilidiliPCSource>();
+            foreach (var item in searchResult)
             {
-
-                string playLine = sources[i].Trim().GetHtmlLabel("a").RemoveHtmlLabel().Replace("\n", "").Replace("\r", "").Replace("\t", "").Trim();
-                var lines = playLine.Split('(');
-                string playSource = lines[0];
-                int maxNum = 0;
-                if (lines.Length > 0)
+                result.Add(new DilidiliPCSource()
                 {
-                    int.TryParse(playLine.Split('(')[1].Replace(")", ""), out maxNum);
-                }
-
-                List<HtmlALabel> list = new List<HtmlALabel>();
-                if (contents.Count > i)
-                {
-                    list = contents[i].GetAHrefAndText();
-                    list = list.Where(x => x.Href.Contains(prefix)).ToList();
-                }
-                dilidiliPCSource = await FindAsync(title, playSource);
-                if (dilidiliPCSource == null)
-                {
-                    dilidiliPCSource = new DilidiliPCSource()
-                    {
-                        Id = 0,
-                        Name = title,
-                        PlaySource = playSource,
-                        CurrentMaxNum = maxNum,
-                        Url = list.First().Href
-                    };
-                }
-                else
-                {
-                    dilidiliPCSource.CurrentMaxNum = maxNum;
-                    dilidiliPCSource.Name = title;
-                    dilidiliPCSource.PlaySource = playSource;
-                    dilidiliPCSource.Url = list.First().Href;
-                }
-
-
-                dilidiliPCSources.Add(dilidiliPCSource);
+                    CurrentMaxNum = "连载至 " + item.lianzaijs,
+                    Id = _idWorker.NextId(),
+                    Name = item.title,
+                    PlaySource = item.url,
+                    Time = item.time,
+                    Area = item.area,
+                    Star = item.star,
+                    Remark = item.beizhu,
+                    Img = item.thumb,
+                });
             }
-
-            return dilidiliPCSources;
+            return result;
         }
     }
 }

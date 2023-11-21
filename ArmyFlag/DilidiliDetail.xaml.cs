@@ -28,7 +28,7 @@ public partial class DilidiliDetail : ContentPage
     {
         _dilidiliPCSource = dilidiliPCSource;
         this.Title = _dilidiliPCSource.Name;
-        lblSource.Text = $"{_dilidiliPCSource.PlaySource},π≤({dilidiliPCSource.CurrentMaxNum})";
+        lblSource.Text = $"{_dilidiliPCSource.PlaySource},¡¨‘ÿ÷¡({dilidiliPCSource.CurrentMaxNum})";
         isInit = false;
         await AnalysisAsync();
     }

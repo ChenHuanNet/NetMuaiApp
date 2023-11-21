@@ -5,14 +5,12 @@
              Title="Dilidili">
     <VerticalStackLayout>
         <StackLayout Orientation="Horizontal">
-            <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找动漫" />
+            <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找视频" />
             <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnSearch_Clicked" />
             <Button x:Name="btnClear" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear_Clicked"/>
         </StackLayout>
-        <Entry x:Name="txtUrl"  Placeholder="请输入[https://www.dilidili8.cc/media/{0}/]的网址ID" />
         <StackLayout Orientation="Horizontal">
-            <Button x:Name="btnAnalysis" Text="解析" CornerRadius="0" HeightRequest="40" Clicked="btnAnalysis_Clicked" />
-            <Button x:Name="btnClear2" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear2_Clicked"/>
+            <Button x:Name="btnNetSearch" Text="网络搜索" CornerRadius="0" HeightRequest="40" Clicked="btnNetSearch_Clicked" />
         </StackLayout>
         <Button  Text="保存当前最新数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked_1"/>
         <Button  Text="重置表" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
@@ -20,31 +18,11 @@
         <StackLayout Orientation="Horizontal">
             <Label Text="搜索结果" />
         </StackLayout>
-        <ListView x:Name="sourceList" ItemsSource="{Binding DilidiliSourceList}" ItemTapped="ListView_ItemTapped">
+        <ListView x:Name="sourceList"  ItemTapped="ListView_ItemTapped" 
+                  RowHeight="100">
             <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <Grid Padding="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="200" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0"
-                           Text="{Binding Name}"       
-                           FontAttributes="Bold"
-                           VerticalOptions="End"  />
-                            <Label Grid.Column="1"
-                           Text="{Binding PlaySource}"       
-                           VerticalOptions="End"  />
-                            <Label Grid.Column="2"
-                           Text="{Binding CurrentMaxNum}"       
-                           VerticalOptions="End"  />
-                        </Grid>
-                    </ViewCell>
+                <DataTemplate >
+                    <ImageCell ImageSource="{Binding Img}" Text="{Binding Name}"  Detail="{Binding CurrentMaxNum}"   />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

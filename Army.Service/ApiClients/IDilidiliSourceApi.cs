@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Army.Domain.Consts;
+using Army.Domain.Dto;
+using Army.Service.ApiClients.Filters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -17,5 +20,9 @@ namespace Army.Service.ApiClients
         [HttpGet("/play/{mediaId}/{detailId}.html")]
         ITask<string> GetSourceItemHtml(string mediaId, string detailId);
 
+
+        [HttpGet("ssszz.php")]
+        [UriFilter]
+        ITask<string> SearchVideoAsync([Header("TenantId")] string tenantId, string q, int top = 10, int dect = 0, string other_kkk217 = AppConfigHelper.DiliDiliSourceHostEncoding);
     }
 }
