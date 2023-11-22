@@ -61,6 +61,12 @@ namespace Army.Service
             return await _dilidiliPCSourceRepository.FindSingleAsync(x => x.Name == name && x.Time == time);
         }
 
+
+        public async Task<DilidiliPCSource> FindByIdAsync(long id)
+        {
+            return await _dilidiliPCSourceRepository.FindSingleAsync(x => x.Id == id );
+        }
+
         public async Task SaveAsync(List<DilidiliPCSource> list)
         {
             for (int i = 0; i < list.Count; i++)
