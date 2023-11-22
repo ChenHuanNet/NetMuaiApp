@@ -53,6 +53,14 @@ public partial class Dilidili : ContentPage
         this.sourceList.ItemsSource = null;
     }
 
+
+    private void Loading(bool isLoading)
+    {
+
+        loadingIndicator.IsRunning = isLoading;
+        loadingIndicator.IsVisible = isLoading;
+    }
+
     /// <summary>
     /// 搜索
     /// </summary>
@@ -62,9 +70,11 @@ public partial class Dilidili : ContentPage
     {
         try
         {
+            Loading(true);
             string name = txtName.Text?.Trim();
             if (string.IsNullOrWhiteSpace(name))
             {
+                Loading(false);
                 await DisplayAlert("提示", "请输入搜索内容", "取消");
                 return;
             }
@@ -75,6 +85,7 @@ public partial class Dilidili : ContentPage
             if (!dilidiliPCSourcesNet.Any())
             {
                 await DisplayAlert("提示", "搜索没有结果", "取消");
+                Loading(false);
                 return;
             }
 
@@ -92,6 +103,8 @@ public partial class Dilidili : ContentPage
 
             this.sourceList.ItemsSource = null;
             this.sourceList.ItemsSource = dilidiliPCSourcesNet;
+
+            Loading(false);
         }
         catch (Exception ex)
         {

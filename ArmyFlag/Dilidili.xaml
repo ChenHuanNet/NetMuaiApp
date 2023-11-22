@@ -4,6 +4,7 @@
              x:Class="ArmyFlag.Dilidili"
              Title="Dilidili">
     <VerticalStackLayout>
+        <ActivityIndicator x:Name="loadingIndicator" IsRunning="False" IsVisible="False" />
         <StackLayout Orientation="Horizontal">
             <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找视频" />
             <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnNetSearch_Clicked" />

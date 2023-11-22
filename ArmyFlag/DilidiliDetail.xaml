@@ -4,6 +4,7 @@
              x:Class="ArmyFlag.DilidiliDetail"
              Title="DilidiliDetail">
     <VerticalStackLayout>
+        <ActivityIndicator x:Name="loadingIndicator" IsRunning="False" IsVisible="False" />
         <Label 
             x:Name="lblSource"
             VerticalOptions="Center" 

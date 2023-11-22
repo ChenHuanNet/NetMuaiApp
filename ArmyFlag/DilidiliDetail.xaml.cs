@@ -66,18 +66,28 @@ public partial class DilidiliDetail : ContentPage
         videoSourcePicker.ItemsSource = _videoSourceList;
     }
 
+    private void Loading(bool isLoading)
+    {
+
+        loadingIndicator.IsRunning = isLoading;
+        loadingIndicator.IsVisible = isLoading;
+    }
+
 
     private async void btnSearch_Clicked(object sender, EventArgs e)
     {
+        Loading(true);
         int.TryParse(txtName.Text?.Trim(), out int num);
 
         if (num <= 0)
         {
+            Loading(false);
             await DisplayAlert("提示", "请输入正确的集数", "取消");
             return;
         }
         if (string.IsNullOrWhiteSpace(_sourceVal))
         {
+            Loading(false);
             await DisplayAlert("提示", "请选择播放源", "取消");
             return;
         }
@@ -85,6 +95,7 @@ public partial class DilidiliDetail : ContentPage
         var detailId = _dilidiliPCSource.DetailUrl.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).LastOrDefault();
         if (string.IsNullOrWhiteSpace(detailId))
         {
+            Loading(false);
             await DisplayAlert("提示", "解析异常", "取消");
             return;
         }
@@ -96,6 +107,7 @@ public partial class DilidiliDetail : ContentPage
         {
             if (File.Exists(model.Url))
             {
+                Loading(false);
                 //读本地的地址
                 await Navigation.PushAsync(_dilidiliVideo);
                 await _dilidiliVideo.Init(model);
@@ -110,6 +122,7 @@ public partial class DilidiliDetail : ContentPage
         }
 
         webView.Source = url;
+
     }
 
 
@@ -149,6 +162,7 @@ public partial class DilidiliDetail : ContentPage
             webView.Source = null;
             if (string.IsNullOrWhiteSpace(mu38))
             {
+                Loading(false);
                 await DisplayAlert("提示", "不支持此播放源", "取消");
                 _videoSourceList.RemoveAll(x => x.Value == _sourceVal);
                 return;
@@ -162,6 +176,7 @@ public partial class DilidiliDetail : ContentPage
                 tsFiles = await _dilidiliPCSourceItemService.GetTsVideos(mu38);
                 if (tsFiles.Count <= 0)
                 {
+                    Loading(false);
                     await DisplayAlert("提示", $"不支持此播放源[{(_videoSourceList.FirstOrDefault(x => x.Value == _sourceVal)?.Content)}]或MU38地址解析出错", "取消");
                     _videoSourceList.RemoveAll(x => x.Value == _sourceVal);
                     return;
@@ -175,14 +190,19 @@ public partial class DilidiliDetail : ContentPage
 
             if (!tsFiles.Any())
             {
+                Loading(false);
                 lblProgress.Text = "解析失败";
                 return;
             }
 
             lblProgress.Text = "解析成功";
 
+            Loading(false);
+
+            int.TryParse(txtName.Text?.Trim(), out int num);
+
             await Navigation.PushAsync(_dilidiliVideo);
-            await _dilidiliVideo.Init(_dilidiliPCSource.Id, _sourceVal, tsFiles);
+            await _dilidiliVideo.Init(_dilidiliPCSource.Id, _sourceVal, num.ToString(), tsFiles, _dilidiliPCSource.Name);
         }
     }
 

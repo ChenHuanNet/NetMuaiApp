@@ -253,7 +253,7 @@ namespace Army.Service
         }
 
 
-        public async Task<List<string>> DownloadVideos(long sourceId, string source, List<string> urls, Action<int, int> action)
+        public async Task<List<string>> DownloadVideos(long sourceId, string source, string num, List<string> urls, Action<int, int> action)
         {
             List<string> localFiles = new List<string>();
 
@@ -268,15 +268,22 @@ namespace Army.Service
 
                 string name = fileName.Substring(fileName.LastIndexOf('/'), fileName.Length - fileName.LastIndexOf('/')).TrimStart('/');
 
-                string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source);
+                string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source, num);
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
                 }
                 string filePath = Path.Combine(dir, name);
 
+                if (File.Exists(filePath))
+                {
+                    //之前下载过的跳过
+                    localFiles.Add(filePath);
+                    action.Invoke(localFiles.Count, urls.Count);
+                    continue;
+                }
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     try
                     {
@@ -305,7 +312,8 @@ namespace Army.Service
                     }
                     catch (Exception ex)
                     {
-                        if (i == 2)
+                        await Task.Delay(3000);
+                        if (i == 4)
                         {
                             throw ex;
                         }
@@ -338,14 +346,14 @@ namespace Army.Service
         }
 
 
-        public string MergeTsVideo(long sourceId, string source, List<string> tsFiles, Action<int, int> action)
+        public string MergeTsVideo(long sourceId, string source, string num, List<string> tsFiles, Action<int, int> action)
         {
-            string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source);
+            string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source, num);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
-            string outPath = Path.Combine(dir, sourceId + "_" + source + ".mp4");
+            string outPath = Path.Combine(dir, $"{sourceId}_{source}_{num}.mp4");
             using (FileStream reader = new FileStream(outPath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 int i = 0;
@@ -357,6 +365,18 @@ namespace Army.Service
                     }
                     i++;
                     action.Invoke(i, tsFiles.Count);
+
+                    try
+                    {
+                        if (File.Exists(item))
+                        {
+                            File.Delete(item);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
                 }
             }
             return outPath;

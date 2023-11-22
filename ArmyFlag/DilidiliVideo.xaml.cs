@@ -28,26 +28,29 @@ public partial class DilidiliVideo : ContentPage
     {
         _current = item;
         _localVideoUrl = item.Url;
+        lblNum.Text = $"{item.Name} {item.Num}";
         mediaElement.Source = new Uri(_localVideoUrl);
     }
 
 
-    public async Task Init(long sourceId, string source, List<string> tsFiles)
+    public async Task Init(long sourceId, string source, string num, List<string> tsFiles, string name)
     {
         _sourceId = sourceId;
         _source = source;
         _tsFiles = tsFiles;
 
+        lblNum.Text = $"{name} {num}";
+
         try
         {
             lblProgress.Text = $"正在下载资源0/{_tsFiles.Count}";
-            _tsFiles = await _dilidiliPCSourceItemService.DownloadVideos(_sourceId, _source, _tsFiles, (index, total) =>
+            _tsFiles = await _dilidiliPCSourceItemService.DownloadVideos(_sourceId, _source, num, _tsFiles, (index, total) =>
             {
                 lblProgress.Text = $"正在下载资源{index}/{total}";
             });
 
-            lblProgress.Text = $"正在解析资源0/{_tsFiles}";
-            _localVideoUrl = _dilidiliPCSourceItemService.MergeTsVideo(_sourceId, _source, _tsFiles, (index, total) =>
+            lblProgress.Text = $"正在解析资源0/{_tsFiles.Count}";
+            _localVideoUrl = _dilidiliPCSourceItemService.MergeTsVideo(_sourceId, _source, num, _tsFiles, (index, total) =>
             {
                 lblProgress.Text = $"正在解析资源{index}/{total}";
             });
@@ -59,7 +62,8 @@ public partial class DilidiliVideo : ContentPage
                 Id = 0,
                 Source = source,
                 SourceId = sourceId,
-                Url = _localVideoUrl
+                Url = _localVideoUrl,
+                Name = name
             };
             await _dilidiliPCSourceItemService.SaveAsync(_current);
         }
@@ -71,10 +75,6 @@ public partial class DilidiliVideo : ContentPage
 
 
 
-    private async void Button_Clicked(object sender, EventArgs e)
-    {
-
-    }
 
     private void Button_Clicked_1(object sender, EventArgs e)
     {
