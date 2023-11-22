@@ -255,6 +255,14 @@ namespace Army.Service
 
         public async Task<List<string>> DownloadVideos(long sourceId, string source, string num, List<string> urls, Action<int, int> action)
         {
+            string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source, num);
+            string outPath = Path.Combine(dir, $"{sourceId}_{source}_{num}.mp4");
+            if (File.Exists(outPath))
+            {
+                //不处理 已经生成好了，有旧的
+                return urls;
+            }
+
             List<string> localFiles = new List<string>();
 
             using HttpClient httpClient = new HttpClient();
@@ -268,7 +276,7 @@ namespace Army.Service
 
                 string name = fileName.Substring(fileName.LastIndexOf('/'), fileName.Length - fileName.LastIndexOf('/')).TrimStart('/');
 
-                string dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source, num);
+                dir = Path.Combine(AppConfigHelper.VideoDir, sourceId.ToString(), source, num);
                 if (!Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
@@ -354,6 +362,10 @@ namespace Army.Service
                 Directory.CreateDirectory(dir);
             }
             string outPath = Path.Combine(dir, $"{sourceId}_{source}_{num}.mp4");
+            if (File.Exists(outPath))
+            {
+                return outPath;
+            }
             using (FileStream reader = new FileStream(outPath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 int i = 0;

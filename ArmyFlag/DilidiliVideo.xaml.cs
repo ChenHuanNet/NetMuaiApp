@@ -30,6 +30,8 @@ public partial class DilidiliVideo : ContentPage
         _localVideoUrl = item.Url;
         lblNum.Text = $"{item.Name} {item.Num}";
         mediaElement.Source = new Uri(_localVideoUrl);
+        mediaElement.Play();
+        lblProgress.Text = $"解析完成";
     }
 
 
@@ -56,6 +58,7 @@ public partial class DilidiliVideo : ContentPage
             });
 
             mediaElement.Source = new Uri(_localVideoUrl);
+            mediaElement.Play();
 
             _current = new DilidiliPCSourceItem()
             {
@@ -63,9 +66,12 @@ public partial class DilidiliVideo : ContentPage
                 Source = source,
                 SourceId = sourceId,
                 Url = _localVideoUrl,
-                Name = name
+                Name = name,
+                Num = num
             };
             await _dilidiliPCSourceItemService.SaveAsync(_current);
+
+            lblProgress.Text = $"解析完成";
         }
         catch (Exception ex)
         {
