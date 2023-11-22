@@ -22,26 +22,8 @@
             <Label Text="播放源：" />
             <Picker x:Name="videoSourcePicker" Title="选择播放源" ItemDisplayBinding="{Binding Content}"  SelectedIndexChanged="videoSourcePicker_SelectedIndexChanged"  />
         </StackLayout>
+        <Label x:Name="lblProgress"/>
         <WebView x:Name="webView" Navigated="webView_Navigated" IsVisible="false" />
-        <ListView x:Name="sourceItemList" ItemsSource="{Binding DilidiliSourceItemList}" ItemTapped="sourceItemList_ItemTapped">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <Grid Padding="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0"
-                           Text="{Binding Name}"       
-                           FontAttributes="Bold"
-                           VerticalOptions="End"  />
-                        </Grid>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+       
     </VerticalStackLayout>
 </ContentPage>

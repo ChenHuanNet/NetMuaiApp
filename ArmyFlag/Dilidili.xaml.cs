@@ -38,33 +38,13 @@ public partial class Dilidili : ContentPage
     private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
     {
         var item = (DilidiliPCSource)e.Item;
-        if (await DisplayAlert("是否跳转？", $"跳转到详情查看或继续解析！{(item.Id == 0 ? "当前数据尚未保存，会导致后续解析也无法保存，确定继续跳转？" : "")}", "确定", "取消"))
+        if (await DisplayAlert("是否跳转？", $"跳转到详情，选集和播放源", "确定", "取消"))
         {
+            await dilidiliPCSourceservice.SaveAsync(item);
+
             await Navigation.PushAsync(_dilidiliDetail);
             await _dilidiliDetail.Init(item);
         }
-    }
-
-    /// <summary>
-    /// 查询本地库
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void btnSearch_Clicked(object sender, EventArgs e)
-    {
-        if (string.IsNullOrWhiteSpace(txtName.Text))
-        {
-            await DisplayAlert("提示", "请输入搜索内容", "取消");
-            return;
-        }
-        var dilidiliPCSources = await dilidiliPCSourceservice.FindLikeNameAsync(txtName.Text?.Trim());
-        if (!dilidiliPCSources.Any())
-        {
-            await DisplayAlert("提示", "本地没有当前搜索结果", "取消");
-            return;
-        }
-        this.sourceList.ItemsSource = null;
-        this.sourceList.ItemsSource = dilidiliPCSources;
     }
 
     private void btnClear_Clicked(object sender, EventArgs e)
@@ -72,7 +52,6 @@ public partial class Dilidili : ContentPage
         txtName.Text = string.Empty;
         this.sourceList.ItemsSource = null;
     }
-
 
     /// <summary>
     /// 搜索
@@ -89,14 +68,30 @@ public partial class Dilidili : ContentPage
                 await DisplayAlert("提示", "请输入搜索内容", "取消");
                 return;
             }
-            var dilidiliPCSources = await dilidiliPCSourceservice.AnalysisAsync(name);
-            if (!dilidiliPCSources.Any())
+
+            var dilidiliPCSourcesDb = await dilidiliPCSourceservice.FindLikeNameAsync(txtName.Text?.Trim());
+
+            var dilidiliPCSourcesNet = await dilidiliPCSourceservice.AnalysisAsync(name);
+            if (!dilidiliPCSourcesNet.Any())
             {
-                await DisplayAlert("提示", "网络搜索没有结果", "取消");
+                await DisplayAlert("提示", "搜索没有结果", "取消");
                 return;
             }
+
+            if (dilidiliPCSourcesDb.Any())
+            {
+                dilidiliPCSourcesNet.ForEach((item) =>
+                {
+                    var dbItem = dilidiliPCSourcesDb.FirstOrDefault(x => x.Name == item.Name);
+                    if (dbItem != null)
+                    {
+                        item.Id = dbItem.Id;
+                    }
+                });
+            }
+
             this.sourceList.ItemsSource = null;
-            this.sourceList.ItemsSource = dilidiliPCSources;
+            this.sourceList.ItemsSource = dilidiliPCSourcesNet;
         }
         catch (Exception ex)
         {
@@ -112,7 +107,7 @@ public partial class Dilidili : ContentPage
     /// <param name="e"></param>
     private async void Button_Clicked(object sender, EventArgs e)
     {
-        if (await DisplayAlert("确认重置?", "重置后，数据将清理，不可恢复！", "确认", "取消"))
+        if (await DisplayAlert("确认清空?", "数据清理，不可恢复！", "确认", "取消"))
         {
             try
             {
@@ -126,17 +121,4 @@ public partial class Dilidili : ContentPage
         }
     }
 
-    /// <summary>
-    /// 保存解析后的数据
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void Button_Clicked_1(object sender, EventArgs e)
-    {
-        var data = this.sourceList.ItemsSource;
-        if (data != null && data is List<DilidiliPCSource> list)
-        {
-            await dilidiliPCSourceservice.SaveAsync(list);
-        }
-    }
 }

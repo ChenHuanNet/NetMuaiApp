@@ -11,11 +11,11 @@ namespace Army.Domain.Models
 
         public string Name { get; set; }
 
-        public string PlaySource { get; set; }
+        public string DetailUrl { get; set; }
 
         public string CurrentMaxNum { get; set; }
 
-        public string Url { get; set; }
+        public string CurrentMaxText { get; set; }
 
         public string Remark { get; set; }
 

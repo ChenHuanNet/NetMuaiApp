@@ -12,8 +12,13 @@ namespace Army.Domain.Models
         [SQLite.PrimaryKey]
         public long Id { get; set; }
         public long SourceId { get; set; }
+        public string Source { get; set; }
+        public string Num { get; set; }
         public string Name { get; set; }
         public int Sort { get; set; }
+        /// <summary>
+        /// 本地地址
+        /// </summary>
         public string Url { get; set; }
         public string Remark { get; set; }
         public string DownloadText { get; set; }

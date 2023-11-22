@@ -62,17 +62,10 @@ public partial class DilidiliDetail : ContentPage
 
         _dilidiliPCSource = dilidiliPCSource;
         this.Title = _dilidiliPCSource.Name;
-        lblSource.Text = dilidiliPCSource.CurrentMaxNum;
+        lblSource.Text = dilidiliPCSource.CurrentMaxText;
         videoSourcePicker.ItemsSource = _videoSourceList;
     }
 
-
-    private async void sourceItemList_ItemTapped(object sender, ItemTappedEventArgs e)
-    {
-        var item = (DilidiliPCSourceItem)e.Item;
-        await Navigation.PushAsync(_dilidiliVideo);
-        await _dilidiliVideo.Init(item);
-    }
 
     private async void btnSearch_Clicked(object sender, EventArgs e)
     {
@@ -89,15 +82,32 @@ public partial class DilidiliDetail : ContentPage
             return;
         }
 
-        var detailId = _dilidiliPCSource.PlaySource.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).LastOrDefault();
+        var detailId = _dilidiliPCSource.DetailUrl.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).LastOrDefault();
         if (string.IsNullOrWhiteSpace(detailId))
         {
             await DisplayAlert("提示", "解析异常", "取消");
             return;
         }
 
-        string url = $"{AppConfigHelper.DiliDiliSourceHost}/tv/{detailId}/{num}.html";
+        string url = $"{AppConfigHelper.DiliDiliSourceHost}/tv/{detailId}/{num}.html?qp={_sourceVal}";
 
+        var model = await _dilidiliPCSourceItemService.FindAsync(_dilidiliPCSource.Id, _sourceVal, num.ToString());
+        if (model != null)
+        {
+            if (File.Exists(model.Url))
+            {
+                //读本地的地址
+                await Navigation.PushAsync(_dilidiliVideo);
+                await _dilidiliVideo.Init(model);
+                return;
+            }
+            else
+            {
+                //本地地址没了，就删了
+                await _dilidiliPCSourceItemService.DeleteByIdAsync(model.Id);
+            }
+
+        }
 
         webView.Source = url;
     }
@@ -124,15 +134,58 @@ public partial class DilidiliDetail : ContentPage
         var url = e.Url;
         if (url.StartsWith(AppConfigHelper.DiliDiliSourceHost + "/tv"))
         {
+
+            lblProgress.Text = "正在解析mu38地址";
+
+
             var webView = sender as WebView;
 
             string html = await webView.EvaluateJavaScriptAsync("document.documentElement.outerHTML");
 
-            var html2 = DecodeEncodedNonAsciiCharacters(html);
+            html = DecodeEncodedNonAsciiCharacters(html);
 
-            await _dilidiliPCSourceItemService.AnalysisAsync(html);
+            var mu38 = await _dilidiliPCSourceItemService.AnalysisAsync(html, _sourceVal);
+
+            webView.Source = null;
+            if (string.IsNullOrWhiteSpace(mu38))
+            {
+                await DisplayAlert("提示", "不支持此播放源", "取消");
+                _videoSourceList.RemoveAll(x => x.Value == _sourceVal);
+                return;
+            }
+
+
+            lblProgress.Text = "正在解析ts地址";
+            List<string> tsFiles = new List<string>();
+            try
+            {
+                tsFiles = await _dilidiliPCSourceItemService.GetTsVideos(mu38);
+                if (tsFiles.Count <= 0)
+                {
+                    await DisplayAlert("提示", $"不支持此播放源[{(_videoSourceList.FirstOrDefault(x => x.Value == _sourceVal)?.Content)}]或MU38地址解析出错", "取消");
+                    _videoSourceList.RemoveAll(x => x.Value == _sourceVal);
+                    return;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("错误", ex.ToString(), "取消");
+            }
+
+            if (!tsFiles.Any())
+            {
+                lblProgress.Text = "解析失败";
+                return;
+            }
+
+            lblProgress.Text = "解析成功";
+
+            await Navigation.PushAsync(_dilidiliVideo);
+            await _dilidiliVideo.Init(_dilidiliPCSource.Id, _sourceVal, tsFiles);
         }
     }
+
 
     static string DecodeEncodedNonAsciiCharacters(string value)
     {

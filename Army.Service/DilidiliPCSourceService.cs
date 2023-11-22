@@ -50,9 +50,9 @@ namespace Army.Service
             await _dilidiliPCSourceRepository.InsertAsync(model);
         }
 
-        public async Task<DilidiliPCSource> FindAsync(string name, string source)
+        public async Task<DilidiliPCSource> FindAsync(string name, string time)
         {
-            return await _dilidiliPCSourceRepository.FindSingleAsync(x => x.Name == name && x.PlaySource == source);
+            return await _dilidiliPCSourceRepository.FindSingleAsync(x => x.Name == name && x.Time == time);
         }
 
         public async Task SaveAsync(List<DilidiliPCSource> list)
@@ -63,13 +63,16 @@ namespace Army.Service
                 //只针对新解析的进行更新覆盖操作
                 if (item.Id == 0)
                 {
-                    var temp = await FindAsync(item.Name, item.PlaySource);
+                    var temp = await FindAsync(item.Name, item.Time);
                     if (temp != null)
                     {
-                        temp.PlaySource = item.PlaySource;
-                        temp.Url = item.Url;
+                        temp.DetailUrl = item.DetailUrl;
+                        temp.CurrentMaxText = item.CurrentMaxText;
+                        temp.CurrentMaxNum = item.CurrentMaxNum;
                         temp.Remark = item.Remark;
-                        temp.Name = item.Name;
+                        temp.Star = item.Star;
+                        temp.Area = item.Area;
+                        temp.Img = item.Img;
                         await _dilidiliPCSourceRepository.UpdateOneAsync(temp);
                     }
                     else
@@ -85,6 +88,35 @@ namespace Army.Service
             }
         }
 
+        public async Task SaveAsync(DilidiliPCSource item)
+        {
+            //只针对新解析的进行更新覆盖操作
+            if (item.Id == 0)
+            {
+                var temp = await FindAsync(item.Name, item.Time);
+                if (temp != null)
+                {
+                    temp.DetailUrl = item.DetailUrl;
+                    temp.CurrentMaxText = item.CurrentMaxText;
+                    temp.CurrentMaxNum = item.CurrentMaxNum;
+                    temp.Remark = item.Remark;
+                    temp.Star = item.Star;
+                    temp.Area = item.Area;
+                    temp.Img = item.Img;
+                    await _dilidiliPCSourceRepository.UpdateOneAsync(temp);
+                }
+                else
+                {
+                    item.Id = _idWorker.NextId();
+                    await _dilidiliPCSourceRepository.InsertAsync(item);
+                }
+            }
+            else
+            {
+                await _dilidiliPCSourceRepository.UpdateOneAsync(item);
+            }
+        }
+
 
         public async Task<List<DilidiliPCSource>> AnalysisAsync(string title)
         {
@@ -96,10 +128,11 @@ namespace Army.Service
             {
                 result.Add(new DilidiliPCSource()
                 {
-                    CurrentMaxNum = "连载至 " + item.lianzaijs,
-                    Id = _idWorker.NextId(),
+                    CurrentMaxNum = item.lianzaijs,
+                    CurrentMaxText = "连载至 " + item.lianzaijs,
+                    Id = 0,
                     Name = item.title,
-                    PlaySource = item.url,
+                    DetailUrl = item.url,
                     Time = item.time,
                     Area = item.area,
                     Star = item.star,

@@ -6,14 +6,10 @@
     <VerticalStackLayout>
         <StackLayout Orientation="Horizontal">
             <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找视频" />
-            <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnSearch_Clicked" />
+            <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnNetSearch_Clicked" />
             <Button x:Name="btnClear" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear_Clicked"/>
         </StackLayout>
-        <StackLayout Orientation="Horizontal">
-            <Button x:Name="btnNetSearch" Text="网络搜索" CornerRadius="0" HeightRequest="40" Clicked="btnNetSearch_Clicked" />
-        </StackLayout>
-        <Button  Text="保存当前最新数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked_1"/>
-        <Button  Text="重置表" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
+        <Button  Text="清空缓存数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
 
         <StackLayout Orientation="Horizontal">
             <Label Text="搜索结果" />
@@ -22,7 +18,7 @@
                   RowHeight="100">
             <ListView.ItemTemplate>
                 <DataTemplate >
-                    <ImageCell ImageSource="{Binding Img}" Text="{Binding Name}"  Detail="{Binding CurrentMaxNum}"   />
+                    <ImageCell ImageSource="{Binding Img}" Text="{Binding Name}"  Detail="{Binding CurrentMaxText}"   />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

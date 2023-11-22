@@ -48,7 +48,8 @@ namespace Army.Repository.Sqlite
             await Database.CreateTableAsync<DilidiliPCSourceItem>();
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Name);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.SourceId);
-            await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Url);
+            await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Source);
+            await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Num);
 
         }
 
