@@ -13,8 +13,4 @@
         Title="嘀哩嘀哩"
         ContentTemplate="{DataTemplate local:Dilidili}"
         Route="Dilidili" />
-    <ShellContent
-     Title="测试播放器"
-     ContentTemplate="{DataTemplate local:DilidiliVideo}"
-     Route="DilidiliVideo" />
 </Shell>

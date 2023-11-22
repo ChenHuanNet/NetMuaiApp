@@ -6,6 +6,7 @@ using Army.Infrastructure.Models;
 using Army.Domain.Models;
 using Snowflake.Core;
 using System.Collections.ObjectModel;
+using ArmyFlag.ViewModels;
 
 namespace ArmyFlag;
 
@@ -17,6 +18,7 @@ public partial class Dilidili : ContentPage
     private readonly DilidiliDetail _dilidiliDetail;
     private readonly string _searchUrl;
 
+    private VideoViewModel VideoViewModel { get; set; } = new VideoViewModel();
 
     public Dilidili(DilidiliPCSourceService dilidiliPCSourceService, IDilidiliSourceApi dilidiliSourceApi, IdWorker idWorker, DilidiliDetail dilidiliDetail)
     {
@@ -26,6 +28,7 @@ public partial class Dilidili : ContentPage
         _idWorker = idWorker;
         _dilidiliDetail = dilidiliDetail;
 
+        this.sourceList.ItemsSource = VideoViewModel.DilidiliPCSourcesOb;
     }
 
 
@@ -50,7 +53,6 @@ public partial class Dilidili : ContentPage
     private void btnClear_Clicked(object sender, EventArgs e)
     {
         txtName.Text = string.Empty;
-        this.sourceList.ItemsSource = null;
     }
 
 
@@ -101,8 +103,12 @@ public partial class Dilidili : ContentPage
                 });
             }
 
-            this.sourceList.ItemsSource = null;
-            this.sourceList.ItemsSource = dilidiliPCSourcesNet;
+            dilidiliPCSourcesNet.Reverse();
+            foreach (var item in dilidiliPCSourcesNet)
+            {
+                VideoViewModel.DilidiliPCSourcesOb.Insert(0, item);
+            }
+
 
             Loading(false);
         }
