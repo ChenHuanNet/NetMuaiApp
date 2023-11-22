@@ -53,6 +53,7 @@ public partial class Dilidili : ContentPage
     private void btnClear_Clicked(object sender, EventArgs e)
     {
         txtName.Text = string.Empty;
+        VideoViewModel.DilidiliPCSourcesOb.Clear();
     }
 
 
@@ -103,10 +104,10 @@ public partial class Dilidili : ContentPage
                 });
             }
 
-            dilidiliPCSourcesNet.Reverse();
+            VideoViewModel.DilidiliPCSourcesOb.Clear();
             foreach (var item in dilidiliPCSourcesNet)
             {
-                VideoViewModel.DilidiliPCSourcesOb.Insert(0, item);
+                VideoViewModel.DilidiliPCSourcesOb.Add(item);
             }
 
 
