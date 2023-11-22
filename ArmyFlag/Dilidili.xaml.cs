@@ -18,7 +18,7 @@ public partial class Dilidili : ContentPage
     private readonly DilidiliDetail _dilidiliDetail;
     private readonly string _searchUrl;
 
-    private VideoViewModel VideoViewModel { get; set; } = new VideoViewModel();
+    private ObservableCollection<DilidiliPCSource> DilidiliPCSourcesOb { get; set; }
 
     public Dilidili(DilidiliPCSourceService dilidiliPCSourceService, IDilidiliSourceApi dilidiliSourceApi, IdWorker idWorker, DilidiliDetail dilidiliDetail)
     {
@@ -28,32 +28,13 @@ public partial class Dilidili : ContentPage
         _idWorker = idWorker;
         _dilidiliDetail = dilidiliDetail;
 
-        this.sourceList.ItemsSource = VideoViewModel.DilidiliPCSourcesOb;
     }
 
-
-
-    /// <summary>
-    /// 点击事件
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
-    {
-        var item = (DilidiliPCSource)e.Item;
-        if (await DisplayAlert("是否跳转？", $"跳转到详情，选集和播放源", "确定", "取消"))
-        {
-            await dilidiliPCSourceservice.SaveAsync(item);
-
-            await Navigation.PushAsync(_dilidiliDetail);
-            await _dilidiliDetail.Init(item);
-        }
-    }
 
     private void btnClear_Clicked(object sender, EventArgs e)
     {
         txtName.Text = string.Empty;
-        VideoViewModel.DilidiliPCSourcesOb.Clear();
+        this.sourceList.ItemsSource = null;
     }
 
 
@@ -104,12 +85,8 @@ public partial class Dilidili : ContentPage
                 });
             }
 
-            VideoViewModel.DilidiliPCSourcesOb.Clear();
-            foreach (var item in dilidiliPCSourcesNet)
-            {
-                VideoViewModel.DilidiliPCSourcesOb.Add(item);
-            }
-
+            DilidiliPCSourcesOb = new ObservableCollection<DilidiliPCSource>(dilidiliPCSourcesNet);
+            this.sourceList.ItemsSource = dilidiliPCSourcesNet;
 
             Loading(false);
         }
@@ -141,4 +118,19 @@ public partial class Dilidili : ContentPage
         }
     }
 
+    private async void sourceList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection.Count <= 0)
+        {
+            return;
+        }
+        var item = (DilidiliPCSource)e.CurrentSelection[0];
+        if (await DisplayAlert("是否跳转？", $"跳转到详情，选集和播放源", "确定", "取消"))
+        {
+            await dilidiliPCSourceservice.SaveAsync(item);
+
+            await Navigation.PushAsync(_dilidiliDetail);
+            await _dilidiliDetail.Init(item);
+        }
+    }
 }

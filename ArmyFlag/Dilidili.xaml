@@ -16,15 +16,35 @@
             <StackLayout Orientation="Horizontal">
                 <Label Text="搜索结果" />
             </StackLayout>
-
-            <ListView x:Name="sourceList"  ItemTapped="ListView_ItemTapped" 
-                  RowHeight="100">
-                <ListView.ItemTemplate>
-                    <DataTemplate >
-                        <ImageCell ImageSource="{Binding Img}" Text="{Binding Name}"  Detail="{Binding CurrentMaxText}"   />
+            <CollectionView   x:Name="sourceList"  Grid.Row="7" SelectionMode="Single" SelectionChanged="sourceList_SelectionChanged">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <BoxView Color="#F7F9FA" CornerRadius="20" Margin="15,5"/>
+                            <Grid Margin="25,10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Frame Padding="0" BorderColor="Transparent" HasShadow="False" Grid.RowSpan="4" Margin="5,5,15,5">
+                                    <Image Source="{Binding Img}"
+Aspect="AspectFill"/>
+                                </Frame>
+                                <Label Text="{Binding Name}" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" FontSize="16" Margin="0,3"/>
+                                <Label Text="{Binding CurrentMaxText}" Grid.Column="1"  Grid.Row="4"  FontSize="16" Margin="0,3"/>
+                            </Grid>
+                        </Grid>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
