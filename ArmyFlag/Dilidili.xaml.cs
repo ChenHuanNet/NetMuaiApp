@@ -120,7 +120,7 @@ public partial class Dilidili : ContentPage
     /// <param name="e"></param>
     private async void Button_Clicked(object sender, EventArgs e)
     {
-        if (await DisplayAlert("确认清空?", "数据清理，不可恢复！", "确认", "取消"))
+        if (await DisplayAlert("确认清空?", "数据和缓存文件都将清理，不可恢复！", "确认", "取消"))
         {
             try
             {

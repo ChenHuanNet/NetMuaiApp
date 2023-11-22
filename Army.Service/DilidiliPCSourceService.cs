@@ -16,6 +16,7 @@ using System.Net.Http;
 using Army.Domain.Dto;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.IO;
 
 namespace Army.Service
 {
@@ -43,6 +44,11 @@ namespace Army.Service
         public async Task ResetDataAsync()
         {
             await _dilidiliPCSourceRepository.ResetData();
+            string dir = AppConfigHelper.VideoDir;
+            if (Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
         }
 
         public async Task InsertAsync(DilidiliPCSource model)
