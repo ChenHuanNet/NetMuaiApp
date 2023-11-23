@@ -25,6 +25,6 @@
         </StackLayout>
         <Label x:Name="lblProgress"/>
         <WebView x:Name="webView" Navigated="webView_Navigated" IsVisible="false" />
-       
+        <Button x:Name="btnCollect" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnCollect_Clicked" />
     </VerticalStackLayout>
 </ContentPage>

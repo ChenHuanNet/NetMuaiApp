@@ -4,6 +4,7 @@ using Army.Repository.Sqlite;
 using Army.Service;
 using Snowflake.Core;
 using CommunityToolkit.Maui;
+using Army.Domain.Mapper;
 
 namespace ArmyFlag;
 
@@ -33,6 +34,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<DilidiliDetail>();
         builder.Services.AddSingleton<DilidiliVideo>();
         builder.Services.AddSingleton(x => new IdWorker(1, 1));
+
+        MapsterConfig.Initialization();
 
 
         return builder.Build();

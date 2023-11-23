@@ -34,6 +34,7 @@ namespace Army.Repository.Sqlite
         {
             await Database.DropTableAsync<DilidiliPCSource>();
             await Database.DropTableAsync<DilidiliPCSourceItem>();
+            await Database.DropTableAsync<MyCollection>();
         }
 
 
@@ -50,6 +51,9 @@ namespace Army.Repository.Sqlite
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.SourceId);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Source);
             await Database.CreateIndexAsync<DilidiliPCSourceItem>(x => x.Num);
+
+
+            await Database.CreateTableAsync<MyCollection>();
 
         }
 

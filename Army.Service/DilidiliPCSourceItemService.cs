@@ -15,6 +15,7 @@ using System.IO;
 using System.Net.Http;
 using Army.Domain.Dto;
 using System.Threading;
+using Mapster;
 
 namespace Army.Service
 {
@@ -204,11 +205,7 @@ namespace Army.Service
                     var temp = await FindAsync(item.SourceId, item.Source, item.Num);
                     if (temp != null)
                     {
-                        temp.Url = item.Url;
-                        temp.Sort = item.Sort;
-                        temp.Name = item.Name;
-                        temp.Remark = item.Remark;
-                        temp.DownloadText = item.DownloadText;
+                        item.Adapt(temp);
                         await _dilidiliPCSourceItemRepository.UpdateOneAsync(temp);
                     }
                     else
@@ -233,11 +230,7 @@ namespace Army.Service
                 var temp = await FindAsync(item.SourceId, item.Source, item.Num);
                 if (temp != null)
                 {
-                    temp.Url = item.Url;
-                    temp.Sort = item.Sort;
-                    temp.Name = item.Name;
-                    temp.Remark = item.Remark;
-                    temp.DownloadText = item.DownloadText;
+                    item.Adapt(temp);
                     await _dilidiliPCSourceItemRepository.UpdateOneAsync(temp);
                 }
                 else

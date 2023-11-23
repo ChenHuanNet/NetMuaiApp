@@ -17,6 +17,7 @@ using Army.Domain.Dto;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.IO;
+using Mapster;
 
 namespace Army.Service
 {
@@ -78,13 +79,7 @@ namespace Army.Service
                     var temp = await FindAsync(item.Name, item.Time);
                     if (temp != null)
                     {
-                        temp.DetailUrl = item.DetailUrl;
-                        temp.CurrentMaxText = item.CurrentMaxText;
-                        temp.CurrentMaxNum = item.CurrentMaxNum;
-                        temp.Remark = item.Remark;
-                        temp.Star = item.Star;
-                        temp.Area = item.Area;
-                        temp.Img = item.Img;
+                        item.Adapt(temp);
                         await _dilidiliPCSourceRepository.UpdateOneAsync(temp);
                     }
                     else
@@ -108,13 +103,7 @@ namespace Army.Service
                 var temp = await FindAsync(item.Name, item.Time);
                 if (temp != null)
                 {
-                    temp.DetailUrl = item.DetailUrl;
-                    temp.CurrentMaxText = item.CurrentMaxText;
-                    temp.CurrentMaxNum = item.CurrentMaxNum;
-                    temp.Remark = item.Remark;
-                    temp.Star = item.Star;
-                    temp.Area = item.Area;
-                    temp.Img = item.Img;
+                    item.Adapt(temp);
                     await _dilidiliPCSourceRepository.UpdateOneAsync(temp);
                 }
                 else

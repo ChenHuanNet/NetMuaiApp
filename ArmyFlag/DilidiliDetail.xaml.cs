@@ -11,6 +11,7 @@ public partial class DilidiliDetail : ContentPage
 {
 
     private readonly DilidiliPCSourceItemService _dilidiliPCSourceItemService;
+    private readonly MyCollectionService _myCollectionService;
     private readonly DilidiliVideo _dilidiliVideo;
     private DilidiliPCSource _dilidiliPCSource;
     private List<DilidiliPCSourceItem> _dilidiliPCSourceItems;
@@ -20,12 +21,13 @@ public partial class DilidiliDetail : ContentPage
     private string _sourceVal = "";
 
 
-    public DilidiliDetail(DilidiliPCSourceItemService dilidiliPCSourceItemService, DilidiliVideo dilidiliVideo)
+    public DilidiliDetail(DilidiliPCSourceItemService dilidiliPCSourceItemService, DilidiliVideo dilidiliVideo, MyCollectionService myCollectionService)
     {
         InitializeComponent();
         _dilidiliPCSourceItemService = dilidiliPCSourceItemService;
         _dilidiliVideo = dilidiliVideo;
         _videoSourceList = VideoViewModel.VideoSourceList;
+        _myCollectionService = myCollectionService;
     }
 
 
@@ -33,7 +35,7 @@ public partial class DilidiliDetail : ContentPage
 
     public async Task Init(DilidiliPCSource dilidiliPCSource)
     {
-       
+
 
         _dilidiliPCSource = dilidiliPCSource;
         this.Title = _dilidiliPCSource.Name;
@@ -181,6 +183,13 @@ public partial class DilidiliDetail : ContentPage
         }
     }
 
-
-
+    private async void btnCollect_Clicked(object sender, EventArgs e)
+    {
+        long sourceId = _dilidiliPCSource.Id;
+        var model = await _myCollectionService.FindBySourceIdAsync(sourceId);
+        if (model == null)
+        {
+            // ’≤ÿ
+        }
+    }
 }
