@@ -3,48 +3,55 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ArmyFlag.Dilidili"
              Title="Dilidili">
-    <ScrollView>
-        <VerticalStackLayout>
-            <ActivityIndicator x:Name="loadingIndicator" IsRunning="False" IsVisible="False" />
-            <StackLayout Orientation="Horizontal">
-                <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找视频" />
-                <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnNetSearch_Clicked" />
-                <Button x:Name="btnClear" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear_Clicked"/>
-            </StackLayout>
-            <Button  Text="清空缓存数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
-
-            <StackLayout Orientation="Horizontal">
-                <Label Text="搜索结果" />
-            </StackLayout>
-            <CollectionView   x:Name="sourceList"  Grid.Row="7" SelectionMode="Single" SelectionChanged="sourceList_SelectionChanged">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <BoxView Color="#F7F9FA" CornerRadius="20" Margin="15,5"/>
-                            <Grid Margin="25,10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <Frame Padding="0" BorderColor="Transparent" HasShadow="False" Grid.RowSpan="4" Margin="5,5,15,5">
-                                    <Image Source="{Binding Img}"
+    <AbsoluteLayout>
+        <ScrollView>
+            <VerticalStackLayout>
+                <StackLayout Orientation="Horizontal">
+                    <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找视频" />
+                    <Button x:Name="btnSearch" Text="搜索" CornerRadius="0" HeightRequest="40" Clicked="btnNetSearch_Clicked" />
+                    <Button x:Name="btnClear" Text="清空" Margin="5,0,0,0" CornerRadius="0" HeightRequest="40" Clicked="btnClear_Clicked"/>
+                </StackLayout>
+                <Button  Text="清空缓存数据" Margin="0,5,0,0" CornerRadius="0" HeightRequest="40" Clicked="Button_Clicked"/>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="搜索结果" />
+                </StackLayout>
+                <CollectionView   x:Name="sourceList"  Grid.Row="7" SelectionMode="Single" SelectionChanged="sourceList_SelectionChanged" >
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <!--左滑按钮-->
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="Collect" BackgroundColor="Pink" ></SwipeItem>
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+                                <Grid>
+                                    <BoxView Color="#F7F9FA" CornerRadius="20" Margin="15,5"/>
+                                    <Grid Margin="25,10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Padding="0" BorderColor="Transparent" HasShadow="False" Grid.RowSpan="4" Margin="5,5,15,5">
+                                            <Image Source="{Binding Img}"
 Aspect="AspectFill"/>
-                                </Frame>
-                                <Label Text="{Binding Name}" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" FontSize="16" Margin="0,3"/>
-                                <Label Text="{Binding CurrentMaxText}" Grid.Column="1"  Grid.Row="4"  FontSize="16" Margin="0,3"/>
-                            </Grid>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-
-        </VerticalStackLayout>
-    </ScrollView>
+                                        </Frame>
+                                        <Label Text="{Binding Name}" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" FontSize="16" Margin="0,3"/>
+                                        <Label Text="{Binding CurrentMaxText}" Grid.Column="1"  Grid.Row="4"  FontSize="16" Margin="0,3"/>
+                                    </Grid>
+                                </Grid>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+        <ActivityIndicator x:Name="loadingIndicator" IsRunning="False" IsVisible="False"  AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"/>
+    </AbsoluteLayout>
 </ContentPage>
