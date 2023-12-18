@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ArmyFlag.Dilidili"
              Title="Dilidili">
-
+    <!--<ContentPage.BindingContext>
+</ContentPage.BindingContext>-->
     <ScrollView>
         <AbsoluteLayout>
             <VerticalStackLayout>
