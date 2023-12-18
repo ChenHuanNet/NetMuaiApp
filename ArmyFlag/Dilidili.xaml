@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ArmyFlag.Dilidili"
              Title="Dilidili">
-    <AbsoluteLayout>
-        <ScrollView>
+
+    <ScrollView>
+        <AbsoluteLayout>
             <VerticalStackLayout>
                 <StackLayout Orientation="Horizontal">
                     <Entry x:Name="txtName" WidthRequest="250" Placeholder="请输入查找视频" />
@@ -15,28 +16,28 @@
                 <StackLayout Orientation="Horizontal">
                     <Label Text="搜索结果" />
                 </StackLayout>
-                <CollectionView   x:Name="sourceList"  Grid.Row="7" SelectionMode="Single" SelectionChanged="sourceList_SelectionChanged" >
+                <CollectionView   x:Name="sourceList"  Grid.Row="7" SelectionMode="Single"  >
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <!--左滑按钮-->
                             <SwipeView>
-                                <SwipeView.LeftItems>
+                                <SwipeView.RightItems>
                                     <SwipeItems>
-                                        <SwipeItem Text="Collect" BackgroundColor="Pink" ></SwipeItem>
+                                        <SwipeItem Text="Collect" BackgroundColor="Pink"></SwipeItem>
                                     </SwipeItems>
-                                </SwipeView.LeftItems>
+                                </SwipeView.RightItems>
                                 <Grid>
                                     <BoxView Color="#F7F9FA" CornerRadius="20" Margin="15,5"/>
                                     <Grid Margin="25,10">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
                                             <RowDefinition Height="30"/>
-                                            <RowDefinition/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="30*"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="220"/>
                                         </Grid.ColumnDefinitions>
                                         <Frame Padding="0" BorderColor="Transparent" HasShadow="False" Grid.RowSpan="4" Margin="5,5,15,5">
                                             <Image Source="{Binding Img}"
@@ -51,7 +52,9 @@ Aspect="AspectFill"/>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </VerticalStackLayout>
-        </ScrollView>
-        <ActivityIndicator x:Name="loadingIndicator" IsRunning="False" IsVisible="False"  AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"/>
-    </AbsoluteLayout>
+
+            <ActivityIndicator x:Name="loadingIndicator" IsRunning="False" IsVisible="False"  AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All"/>
+        </AbsoluteLayout>
+    </ScrollView>
+
 </ContentPage>

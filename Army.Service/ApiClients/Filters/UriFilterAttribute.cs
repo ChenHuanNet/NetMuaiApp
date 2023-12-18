@@ -22,12 +22,12 @@ namespace Army.Service.ApiClients.Filters
         {
             var tenantId = context.HttpContext.RequestMessage.Headers.Contains("TenantId") ? context.HttpContext.RequestMessage.Headers.GetValues("TenantId").FirstOrDefault() : "";
 
-
+        
             string host = "http://dilidili9.com";
             switch (tenantId)
             {
                 case "dilidili9": host = "http://dilidili9.com"; break;
-                case "search": host = "http://175.178.205.131:22117"; break;
+                case "search": host = "http://119.91.125.201:11334"; break;//这个地址一段时间会一直变
             }
             HttpApiRequestMessage requestMessage = context.HttpContext.RequestMessage;
 
